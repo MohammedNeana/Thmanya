@@ -1,0 +1,58 @@
+services:
+  cms-api:
+    build:
+      context: ./services/cms
+      dockerfile: Dockerfile
+    command: sh -c "until nc -z postgres 5432; do echo 'Waiting for Postgres...'; sleep 1; done; npx prisma migrate dev --name init && node dist/main"
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/thmanyah
+      PORT: 3001
+      LOG_LEVEL: debug
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  discovery-api:
+    build:
+      context: ./services/discovery
+      dockerfile: Dockerfile
+    command: node dist/main
+    ports:
+      - '3002:3002'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/thmanyah
+      REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      PORT: 3002
+      LOG_LEVEL: debug
+    depends_on:
+      - postgres
+      - redis
+      - cms-api
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: thmanyah
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

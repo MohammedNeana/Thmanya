@@ -1,0 +1,13 @@
+node_modules
+/node_modules
+services/cms/node_modules
+services/discovery/node_modules
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.env
+.temp
+.tmp
+dist
