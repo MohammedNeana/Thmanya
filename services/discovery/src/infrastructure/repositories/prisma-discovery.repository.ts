@@ -34,6 +34,7 @@ export class PrismaDiscoveryRepository implements IDiscoveryRepository {
                 skip,
                 take: limit,
                 orderBy: { createdAt: 'desc' },
+                include: { episodes: { where: { isPublished: true }, orderBy: { order: 'asc' } } },
             }),
             this.prisma.program.count({ where }),
         ]);

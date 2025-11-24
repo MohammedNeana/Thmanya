@@ -30,6 +30,6 @@ export class Program {
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
         this.thumbnailUrl = props.thumbnailUrl;
-        this.episodes = props.episodes;
+        this.episodes = props.episodes ?? [];
     }
 }
